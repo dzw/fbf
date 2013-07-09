@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   showStatusBar="false" width="800" height="630"
+					   creationComplete="windowedapplication1_creationCompleteHandler(event)" xmlns:local="*" xmlns:view="fbftool.view.*">
+	
+	<fx:Script source="FBFToolAction.as" />
+
+	
+
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Group id="projectController" enabled="true" top="0" left="0" right="0" bottom="0">
+		<s:Button id="newProjectBtn" right="730" top="10" label="新建项目" click="newProjectBtnClickEvent(event)"/>
+		<s:Button id="openProjectBtn" right="662" top="10" label="打开项目" click="openProjectBtnClickEvent(event)"/>
+	</s:Group>
+	
+	<s:Group id="projectResController" enabled="false" top="0" left="0" right="0" bottom="0">
+		<s:Button id="saveProjectBtn" right="594" top="10" label="保存项目" click="saveProjectBtnClickEvent(event)"/>
+		<s:Button id="saveFBFFileBtn" right="549" top="10" label="导出" click="saveFBFFileBtn_clickHandler(event)"/>
+		<s:Button id="selectImageFilesBtn" left="591" right="10" top="10" height="22" label="导入资源" click="selectFontImageFolder(event)"/>
+	</s:Group>
+	
+	<s:Button right="505" top="10" label="预览" click="previewFBFFileEvent(event)"/>
+	<s:Button id="aboutBtn" right="462" top="10" label="关于" click="aboutBtn_clickHandler(event)"/>
+	
+	<s:Group id="projectEditController" enabled="false" top="0" left="0" right="0" bottom="0">
+		<s:List id="imageList"  right="10" top="180" bottom="10" width="200" labelField="name" >
+			<s:itemRenderer>
+				<fx:Component>
+					<view:MyItemRenderer >
+						
+					</view:MyItemRenderer>
+				</fx:Component>
+			</s:itemRenderer>
+		</s:List>
+		
+		
+		<s:Label right="185" top="47" text="宽度"/>
+		<s:Label right="185" top="75" text="高度"/>
+		<s:DropDownList id="stageWidthL" right="10" top="40" width="150" change="stageWidthL_changeHandler(event)"></s:DropDownList>
+		<s:DropDownList id="stageHeightL" right="10" top="71" width="150" change="stageHeightL_changeHandler(event)"></s:DropDownList>
+		<s:DropDownList id="maxRectTypeL" right="10" top="100" width="150" change="maxRectTypeL_changeHandler(event)"></s:DropDownList>
+		<s:Label x="591" y="106" text="布局"/>
+		<s:Label id="infoLabel" right="10" top="130" bottom="458" width="200" text="尚未选择任何位图字体文件"/>
+		<s:BorderContainer id="stageCon" left="10" right="218" top="80" bottom="10">
+			<s:Scroller left="0" right="0" top="0" bottom="0">
+				<s:VGroup width="100%" height="100%">
+					<view:BitmapFontMap id="bfontStage" />
+				</s:VGroup>
+			</s:Scroller>
+		</s:BorderContainer>
+		<s:Button id="addScale" left="10" top="40" width="23" height="23" label="+" click="addScaleEvent(event)"/>
+		<s:Button id="subScale" left="45" top="40" width="23" height="23" label="-" click="subScaleEvent(event)"/>
+		<s:DropDownList id="stageScaleL" left="83" right="605" top="40" bottom="567" change="changeScaleList(event)"></s:DropDownList>
+		<view:WarningView id="warningScene" top="80" left="10" />
+		<s:Button id="delCharBtn" left="590" top="150" label="删除选中字符"
+				  click="delCharBtn_clickHandler(event)"/>
+		<s:Button id="addCharBtn" right="10" top="150" label="添加单张字符" click="addCharBtnClickEvent(event)"/>
+	</s:Group>
+	
+	
+	
+</s:WindowedApplication>

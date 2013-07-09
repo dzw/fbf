@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="800" height="630" xmlns:local="*" showStatusBar="false"
+					   creationComplete="windowedapplication1_creationCompleteHandler(event)" xmlns:view="fbftool.view.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.mebius.display.FBFTextField;
+			
+			import mx.events.ColorPickerEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import spark.events.TextOperationEvent;
+			
+			private var openFile:File;
+			//关闭
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				PopUpManager.removePopUp( this );
+			}
+			
+			//打开文件
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.openFile = new File();
+				this.openFile.addEventListener(Event.SELECT, selectOpenFile);
+				openFile.browseForOpen("请选择FBF文件",[new FileFilter("fbf文件","*.fbf","*.fbf")]);
+			}
+			
+			private function selectOpenFile(evt:Event):void
+			{
+				this.textController.enabled = false;
+				
+				this.filepathlabel.text = "文件路径:" + this.openFile.url;
+				this.textView.openFBF( this.openFile.url );
+				this.fbfTextView.openFBF( this.openFile.url );
+			}
+			
+			protected function hslider1_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				this.fbfTextView.textField.spacing = this.spHsl.value;
+				this.textSpaceText.text = this.spHsl.value.toString();
+			}
+			
+			protected function textinput1_changeHandler(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+				if( this.autoUpdateTextSwitch.selected )
+				{
+					this.fbfTextView.textField.text = this.setTextInput.text;
+				}
+				
+			}
+			
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.fbfTextView.addEventListener(Event.COMPLETE, fbfinitComplete );
+		//		this.textView.addEventListener(Event.COMPLETE, textViewComplete );
+			}
+			
+			private function fbfinitComplete(evt:Event):void
+			{
+				this.textController.enabled = true;
+			}
+			
+	/*		private function textViewComplete(evt:Event):void
+			{
+				this.fbfTextView..setFBFManage( this.textView.afbf, this.textView.bigbd );
+			}*/
+			
+			protected function charColor_changeHandler(event:ColorPickerEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.fbfTextView.textField.setColor( uint(charColor.value) );
+				
+				var _str:String="000000"+charColor.selectedColor.toString(16).toUpperCase();  
+				
+				this.textColorText.text="#"+_str.substr(_str.length-6);
+			}
+			
+			private function charScaleChangeEvent(evt:Event):void
+			{
+				this.fbfTextView.textField.textScale = this.charScale.value;
+				this.textScaleText.text = this.charScale.value.toString().substr(0,3);
+			}
+			
+			protected function autoUpdateTextSwitch_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.updateTextBtn.enabled = !this.autoUpdateTextSwitch.selected;
+				
+				if( this.autoUpdateTextSwitch.selected )
+				{
+					//执行一次刷新
+					this.fbfTextView.textField.text = this.setTextInput.text;
+				}
+			}
+			
+			protected function updateTextBtn_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.fbfTextView.textField.text = this.setTextInput.text;
+			}
+			
+			protected function textScaleText_changeHandler(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+		//		trace( this.textScaleText.text );
+			}
+			
+			protected function textSpaceText_changeHandler(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+	//			trace( this.textSpaceText.text )
+			}
+			
+			protected function textScaleText_keyDownHandler(event:KeyboardEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(event.keyCode==13)
+				{
+					var num:Number = Number(this.textScaleText.text.substr(0,3));
+					if( num>=0.1 && num<=5 )
+					{
+						this.charScale.value = num;
+						this.textScaleText.text = num.toString().substr(0,3);
+						this.fbfTextView.textField.textScale = this.charScale.value;
+					}
+					else
+					{
+						this.textScaleText.text = this.charScale.value.toString().substr(0,3);
+					}
+				}
+			}
+			
+			protected function textSpaceText_keyDownHandler(event:KeyboardEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(event.keyCode==13)
+				{
+					var num:int = int(this.textSpaceText.text);
+					if( num>=0 && num<=50 )
+					{
+						this.spHsl.value = num;
+						this.fbfTextView.textField.spacing = this.spHsl.value;
+					}
+					else
+					{
+						this.textSpaceText.text = this.spHsl.value.toString();
+					}
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Label id="filepathlabel" left="10" right="145" top="10" height="40" text="文件路径" verticalAlign="top"/>
+	<s:BorderContainer left="10" right="10" top="60" height="250">
+		<s:Scroller left="0" right="0" top="0" bottom="0">
+			<s:VGroup width="100%" height="100%">
+				<view:FBFTextFieldView id="textView" />
+			</s:VGroup>
+		</s:Scroller>
+	</s:BorderContainer>
+	<s:Button right="10" top="10" label="返回" click="button1_clickHandler(event)"/>
+	<s:Button right="54" top="10" label="开打FBF文件" click="button2_clickHandler(event)"/>
+	<s:Group id="textController" left="0" right="0" height="392" enabled="false">
+		<s:TextInput id="setTextInput" left="75" top="327" width="540" change="textinput1_changeHandler(event)"/>
+		<mx:HRule y="318" left="0" right="0"/>
+		<s:HSlider id="spHsl" right="103" top="362" width="130" change="hslider1_changeHandler(event)"
+				   maximum="50"/>
+		<s:Label x="523" y="358" width="36" height="24" text="字间距" verticalAlign="middle"/>
+		<s:HSlider id="charScale" x="318" y="362" change="charScaleChangeEvent(event)" maximum="5"
+				   minimum="0.1" stepSize="0.1" value="1"/>
+		<s:Label x="259" y="359" width="52" height="21" text="字体缩放" verticalAlign="middle"/>
+		<mx:ColorPicker id="charColor" x="75" y="360" change="charColor_changeHandler(event)"/>
+		<s:Label x="10" y="359" height="23" text="字体颜色：" verticalAlign="middle"/>
+		<s:TextArea id="textColorText" x="105" y="359" width="120" height="23" editable="false"
+					text="#000000" textAlign="center" verticalAlign="middle"/>
+		<s:TextInput id="textScaleText" restrict="0123456789." text="1" x="429" y="363" width="86" height="19" editable="true"
+					textAlign="center" change="textScaleText_changeHandler(event)" keyDown="textScaleText_keyDownHandler(event)" />
+		<s:TextInput id="textSpaceText" restrict="0-9" text="0" x="704" y="362" width="86" height="19" textAlign="center" keyDown="textSpaceText_keyDownHandler(event)" change="textSpaceText_changeHandler(event)" />
+		<s:CheckBox id="autoUpdateTextSwitch" x="623" y="327" width="100" height="23" label="自动刷新字符"
+					click="autoUpdateTextSwitch_clickHandler(event)" selected="true"/>
+		<s:Button id="updateTextBtn" enabled="false" y="327" right="10" label="刷新字符" click="updateTextBtn_clickHandler(event)"/>
+		<s:Label x="10" y="327" width="57" height="24" text="测试字符 :" textAlign="left"
+				 verticalAlign="middle"/>
+	</s:Group>
+	
+	<s:BorderContainer left="10" right="10" top="400" bottom="10">
+		<s:Scroller left="0" right="0" top="0" bottom="0">
+			<s:VGroup width="100%" height="100%">
+				<view:MebiusFBFTextFieldView id="fbfTextView" top="0" left="0" height="100%" />
+			</s:VGroup>
+		</s:Scroller>
+	</s:BorderContainer>
+	
+</s:WindowedApplication>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:List xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	
+	<s:ItemRenderer>
+		<fx:Component>
+			<s:ItemRenderer>
+				<fx:Script>
+					<![CDATA[
+						import com.kingnare.skin.spark.TextInput.TextInput;
+						
+						import mx.controls.Label;
+						import mx.controls.Text;
+						import mx.core.UIComponent;
+						override public function set data(value:Object):void {
+							var str:String = String(value);
+							//itemIndex
+							var arr:Array = str.split("/");
+							str = (arr[arr.length-1] as String).split(".")[0];
+							this.sn.text = str;
+							this.isn.text = isn.name;
+							//		txt.text = String(value);
+							this.simg.source = String(value);
+						}
+						protected function sn_doubleClickHandler(event:MouseEvent):void
+						{
+							// TODO Auto-generated method stub
+							//	trace( event.target.name );
+							var str:String = event.target.name;
+							var num:int = int( str.substr(5,str.length-4) );
+							var name:String = "TextInput" + (num-1);
+							//		trace(name);
+							//		trace(	(event.target as UIComponent ).parent.getChildByName("isn").getChildByName( name ) as TextInput );
+							//	trace( this.imageList.getChildByName(name) );
+							//		trace( this.imageList.selectedItems );
+							
+						}
+						
+						protected function isn_doubleClickHandler(event:MouseEvent):void
+						{
+							// TODO Auto-generated method stub
+							trace(	(event.target as UIComponent ).parent );
+						}
+					]]>
+				</fx:Script>
+				<s:TextInput id="isn" y="0" height="30" x="60" visible="true" doubleClick="isn_doubleClickHandler(event)" />
+				<s:Label id="sn" y="30" height="30" x="60" doubleClickEnabled="true" doubleClick="sn_doubleClickHandler(event)" />
+				<s:Image id="simg" x="0" height="30" width="30"/>
+			</s:ItemRenderer>
+		</fx:Component>
+	</s:ItemRenderer>
+</s:List>
