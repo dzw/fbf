@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>FBF Format by mebiusashan</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>FBF Format</h1>
+        <h2>FBF Format File</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/mebiusashan/fbf/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/mebiusashan/fbf/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/mebiusashan/fbf" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="fbf-format-file" class="anchor" href="#fbf-format-file"><span class="octicon octicon-link"></span></a>FBF Format File</h1>
+
+<h2>
+<a name="whats-the-fbf-format-file" class="anchor" href="#whats-the-fbf-format-file"><span class="octicon octicon-link"></span></a>What's the FBF Format File</h2>
+
+<p>FBF文件全称为Flash Bitmap Font ，顾名思义，就是将位图作为字体文件。</p>
+
+<h2>
+<a name="fbf-format-file-data" class="anchor" href="#fbf-format-file-data"><span class="octicon octicon-link"></span></a>FBF Format File Data</h2>
+
+<h3>
+<a name="header%E9%83%A8%E5%88%86" class="anchor" href="#header%E9%83%A8%E5%88%86"><span class="octicon octicon-link"></span></a>Header部分</h3>
+
+<pre><code>数据头
+FBF        4字节 uint 0x464246 "FBF"的ASCII编码
+version    2字节 int      1     版本号
+
+字符索引数据段
+type       2字节 int      0     始终为0，表示当前数据为 字符索引数据段
+index_pos  4字节 uint     n     字符索引数据的起始下标
+num block  4字节 uint     n     字符表的数量
+
+png图片数据属性数据段
+type       2字节 int      1      始终为1，表示当前数据为 png图片数据属性数据段
+index_png  4字节 uint     n      png图片数据起始点
+</code></pre>
+
+<h3>
+<a name="%E5%AD%97%E7%AC%A6%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E6%95%B0%E6%8D%AE%E8%A1%A8" class="anchor" href="#%E5%AD%97%E7%AC%A6%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="octicon octicon-link"></span></a>字符索引数据数据表</h3>
+
+<pre><code>str        n字符 UTF-8编码        字符内容
+X          4字符 float单精度浮点数 X坐标
+Y          4字符 float单精度浮点数 Y坐标
+W          4字符 float单精度浮点数 宽度
+H          4字符 float单精度浮点数 高度
+</code></pre>
+
+<h3>
+<a name="png%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE" class="anchor" href="#png%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE"><span class="octicon octicon-link"></span></a>PNG图片数据</h3>
+
+<pre><code>图片仅为一张，使用MaxRect算法生成，所有数据均无小数点，正整数
+</code></pre>
+
+<h2>
+<a name="%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BA%93" class="anchor" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BA%93"><span class="octicon octicon-link"></span></a>如何使用库</h2>
+
+<h3>
+<a name="as3%E7%89%88%E6%9C%AC" class="anchor" href="#as3%E7%89%88%E6%9C%AC"><span class="octicon octicon-link"></span></a>AS3版本</h3>
+
+<p>首先引入需要的类</p>
+
+<div class="highlight"><pre>    <span class="k">import</span> <span class="nn">com.mebius.format.fbf.FBFErrorEvent</span><span class="o">;</span>
+    <span class="k">import</span> <span class="nn">com.mebius.format.fbf.FBFManage</span><span class="o">;</span>
+</pre></div>
+
+<p>创建一个FBFManage对象，并初始化</p>
+
+<div class="highlight"><pre>    <span class="kd">private</span> <span class="kd">var</span> <span class="n">_fontM</span><span class="p">:</span><span class="kt">FBFManage</span> <span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">FBFManage</span><span class="o">();</span>
+
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">SYSTEM_IO_ERROR</span><span class="o">,</span> <span class="n">fbfError1_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">FILE_NOT_FOUND</span><span class="o">,</span> <span class="n">fbfError2_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">FILE_TYPE_ERROR</span><span class="o">,</span> <span class="n">fbfError3_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">VERSION_UNRECOGNIZED_ERROR</span><span class="o">,</span> <span class="n">fbfError4_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">FILE_CORRUPTION_ERROR</span><span class="o">,</span> <span class="n">fbfError5_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">IMAGE_DATA_CORRUPTION_ERROR</span><span class="o">,</span> <span class="n">fbfError6_event</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">FBFErrorEvent</span><span class="o">.</span><span class="na">CHAR_NOT_FOUND</span><span class="o">,</span> <span class="n">fbfError7_event</span><span class="o">);</span>
+</pre></div>
+
+<p>读取指定的FBF文件</p>
+
+<div class="highlight"><pre>    <span class="k">this</span><span class="o">.</span><span class="na">_fontM</span><span class="o">.</span><span class="na">readFBF</span><span class="o">(</span> <span class="n">File</span><span class="o">.</span><span class="na">applicationDirectory</span><span class="o">.</span><span class="na">nativePath</span><span class="o">+</span><span class="s2">"/myFBF_file.fbf"</span> <span class="o">);</span>
+</pre></div>
+
+<p>字体的使用，通过FBFFontManage字体管理类来对加载的FBF字体文件进行使用</p>
+
+<div class="highlight"><pre>    <span class="kd">private</span> <span class="kd">var</span> <span class="n">_fbfFontManage</span><span class="p">:</span><span class="kt">FBFFontManage</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fbfFontManage</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">FBFFontManage</span><span class="o">();</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fbfFontManage</span><span class="o">.</span><span class="na">addEventListener</span><span class="o">(</span> <span class="n">Event</span><span class="o">.</span><span class="na">COMPLETE</span><span class="o">,</span> <span class="n">fontInitComplete</span> <span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_fbfFontManage</span><span class="o">.</span><span class="na">setFBF</span><span class="o">(</span><span class="s2">"自定义字体名称"</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="na">_fontM</span> <span class="o">);</span>
+</pre></div>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
